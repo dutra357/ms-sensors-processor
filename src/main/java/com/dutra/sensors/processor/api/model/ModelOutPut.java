@@ -52,4 +52,14 @@ public class ModelOutPut {
     public void setValue(Double value) {
         this.value = value;
     }
+
+    @Override
+    public String toString() {
+        return "ModelOutPut{" +
+                "id=" + id +
+                ", sensorId=" + sensorId +
+                ", registredAt=" + registredAt +
+                ", value=" + value +
+                '}';
+    }
 }
