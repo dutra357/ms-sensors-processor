@@ -5,6 +5,7 @@ import com.dutra.sensors.processor.api.model.ModelOutPut;
 import io.hypersistence.tsid.TSID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.core.MessagePostProcessor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -48,7 +49,14 @@ public class ProcessingController {
 
         String exchange = RabbitConfig.EXCHANGE_NAME;
         String routingKey = "";
-        rabbitTemplate.convertAndSend(exchange, routingKey, outPut);
+
+        MessagePostProcessor  messagePostProcessor = message -> {
+            message.getMessageProperties().setHeader("sensorId", outPut.getSensorId().toString());
+            message.getMessageProperties().setHeader("uuid", outPut.getId().toString());
+            return message;
+        };
+
+        rabbitTemplate.convertAndSend(exchange, routingKey, outPut, messagePostProcessor);
 
         logger.info("Message sent: {}", outPut);
     }
